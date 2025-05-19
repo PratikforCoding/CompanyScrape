@@ -1,0 +1,41 @@
+name: Automated Career Site Scraper
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # Every 4 hours
+  workflow_dispatch:
+
+jobs:
+  scrape-companies:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CompanyScrape
+    env:
+      GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
+      GOOGLE_SHEET_TITLE: ${{ secrets.GOOGLE_SHEET_TITLE }}
+      GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+      GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Create Secrets Directory
+        run: mkdir -p secrets
+
+      - name: Inject Service Account Credentials
+        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > secrets/credentials.json
+
+      - name: Verify Files
+        run: |
+          ls -la secrets/
+          head -n 1 secrets/credentials.json
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Scraper Script
+        run: python -u career_scraper.py
