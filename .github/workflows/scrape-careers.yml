@@ -2,15 +2,12 @@ name: Automated Career Site Scraper
 
 on:
   schedule:
-    - cron: '0 */4 * * *'  # Every 4 hours
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 
 jobs:
   scrape-companies:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: CompanyScrape
     env:
       GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
       GOOGLE_SHEET_TITLE: ${{ secrets.GOOGLE_SHEET_TITLE }}
